@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info: { title: Air Platform BFF API, version: 1.0.0 }
+paths:
+  /v1/search:
+    post:
+      summary: Search flight offers
+      operationId: search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SearchRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SearchResponse" }
+components:
+  schemas:
+    Pax:
+      type: object
+      properties:
+        type: { type: string, enum: [ADT, CHD, INF] }
+        count: { type: integer, minimum: 1, maximum: 9 }
+      required: [type, count]
+    SearchRequest:
+      type: object
+      properties:
+        origin: { type: string, minLength: 3, maxLength: 3 }
+        destination: { type: string, minLength: 3, maxLength: 3 }
+        dateRange:
+          type: object
+          properties:
+            from: { type: string, format: date }
+            to:   { type: string, format: date }
+          required: [from, to]
+        pax:
+          type: array
+          items: { $ref: "#/components/schemas/Pax" }
+          minItems: 1
+          maxItems: 3
+        cabin:
+          type: string
+          enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+      required: [origin, destination, dateRange, pax]
+    Segment:
+      type: object
+      properties:
+        from: { type: string }
+        to:   { type: string }
+        dep:  { type: string, format: date-time }
+        arr:  { type: string, format: date-time }
+        flight: { type: string }
+      required: [from, to, dep, arr, flight]
+    Offer:
+      type: object
+      properties:
+        uid: { type: string }
+        price:
+          type: object
+          properties:
+            amount: { type: number }
+            currency: { type: string }
+          required: [amount, currency]
+        carrier: { type: string }
+        segments: { type: array, items: { $ref: "#/components/schemas/Segment" } }
+        baggage:
+          type: object
+          nullable: true
+          properties:
+            pieces: { type: integer }
+            weightKg: { type: integer, nullable: true }
+        source: { type: string }
+      required: [uid, price, carrier, segments, source]
+    SearchResponse:
+      type: object
+      properties:
+        offers: { type: array, items: { $ref: "#/components/schemas/Offer" } }
+        partial: { type: boolean }

@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# compact: быстрый линт. typecheck/test — по желанию, без падения коммита
+pnpm -w lint:all || exit 1
+pnpm -w typecheck:all || true
+pnpm -w test:all || true
