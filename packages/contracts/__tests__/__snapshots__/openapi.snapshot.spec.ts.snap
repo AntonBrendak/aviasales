@@ -1,0 +1,327 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BFF OpenAPI v1 snapshot 1`] = `
+{
+  "components": {
+    "schemas": {
+      "AirportCode": {
+        "example": "DUS",
+        "maxLength": 3,
+        "minLength": 3,
+        "type": "string",
+      },
+      "CabinClass": {
+        "enum": [
+          "ECONOMY",
+          "PREMIUM_ECONOMY",
+          "BUSINESS",
+          "FIRST",
+        ],
+        "type": "string",
+      },
+      "Currency": {
+        "enum": [
+          "EUR",
+          "USD",
+          "UAH",
+          "GBP",
+        ],
+        "type": "string",
+      },
+      "DateISO": {
+        "format": "date",
+        "type": "string",
+      },
+      "Leg": {
+        "properties": {
+          "segments": {
+            "items": {
+              "$ref": "#/components/schemas/Segment",
+            },
+            "type": "array",
+          },
+        },
+        "required": [
+          "segments",
+        ],
+        "type": "object",
+      },
+      "Money": {
+        "properties": {
+          "amount": {
+            "format": "double",
+            "minimum": 0,
+            "type": "number",
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+          },
+        },
+        "required": [
+          "amount",
+          "currency",
+        ],
+        "type": "object",
+      },
+      "Offer": {
+        "properties": {
+          "baggage": {
+            "properties": {
+              "cabinBag": {
+                "type": "boolean",
+              },
+              "includedPieces": {
+                "type": "integer",
+              },
+            },
+            "type": "object",
+          },
+          "brand": {
+            "type": "string",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "itinerary": {
+            "properties": {
+              "legs": {
+                "items": {
+                  "$ref": "#/components/schemas/Leg",
+                },
+                "type": "array",
+              },
+            },
+            "required": [
+              "legs",
+            ],
+            "type": "object",
+          },
+          "price": {
+            "$ref": "#/components/schemas/Money",
+          },
+          "provider": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "provider",
+          "price",
+          "itinerary",
+        ],
+        "type": "object",
+      },
+      "PaxMix": {
+        "properties": {
+          "ADT": {
+            "minimum": 1,
+            "type": "integer",
+          },
+          "CHD": {
+            "minimum": 0,
+            "type": "integer",
+          },
+          "INF": {
+            "minimum": 0,
+            "type": "integer",
+          },
+        },
+        "required": [
+          "ADT",
+        ],
+        "type": "object",
+      },
+      "PaxType": {
+        "enum": [
+          "ADT",
+          "CHD",
+          "INF",
+        ],
+        "type": "string",
+      },
+      "SearchRequest": {
+        "example": {
+          "cabin": "ECONOMY",
+          "departure": "2025-09-10",
+          "destination": "IST",
+          "origin": "DUS",
+          "pax": {
+            "ADT": 1,
+          },
+        },
+        "properties": {
+          "cabin": {
+            "$ref": "#/components/schemas/CabinClass",
+          },
+          "departure": {
+            "$ref": "#/components/schemas/DateISO",
+          },
+          "destination": {
+            "$ref": "#/components/schemas/AirportCode",
+          },
+          "filters": {
+            "properties": {
+              "bags": {
+                "maximum": 2,
+                "minimum": 0,
+                "type": "integer",
+              },
+              "maxStops": {
+                "maximum": 3,
+                "minimum": 0,
+                "type": "integer",
+              },
+              "refundable": {
+                "type": "boolean",
+              },
+            },
+            "type": "object",
+          },
+          "origin": {
+            "$ref": "#/components/schemas/AirportCode",
+          },
+          "pax": {
+            "$ref": "#/components/schemas/PaxMix",
+          },
+          "return": {
+            "$ref": "#/components/schemas/DateISO",
+          },
+        },
+        "required": [
+          "origin",
+          "destination",
+          "departure",
+          "pax",
+          "cabin",
+        ],
+        "type": "object",
+      },
+      "SearchResponse": {
+        "properties": {
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/Offer",
+            },
+            "type": "array",
+          },
+          "partial": {
+            "default": true,
+            "type": "boolean",
+          },
+          "searchSessionId": {
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "required": [
+          "searchSessionId",
+          "offers",
+        ],
+        "type": "object",
+      },
+      "Segment": {
+        "properties": {
+          "arrTime": {
+            "format": "date-time",
+            "type": "string",
+          },
+          "carrier": {
+            "example": "LH",
+            "type": "string",
+          },
+          "depTime": {
+            "format": "date-time",
+            "type": "string",
+          },
+          "flightNumber": {
+            "example": "1234",
+            "type": "string",
+          },
+          "from": {
+            "$ref": "#/components/schemas/AirportCode",
+          },
+          "to": {
+            "$ref": "#/components/schemas/AirportCode",
+          },
+        },
+        "required": [
+          "carrier",
+          "flightNumber",
+          "from",
+          "to",
+          "depTime",
+          "arrTime",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {
+    "description": "BFF-контракты для фаз 1–3. В Phase 2 будет реализован /v1/search, в Phase 3 — /v1/price.
+",
+    "title": "Avia BFF API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+          },
+        },
+        "summary": "Health check",
+        "tags": [
+          "Health",
+        ],
+      },
+    },
+    "/v1/search": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse",
+                },
+              },
+            },
+            "description": "Search started and partial results returned",
+          },
+        },
+        "summary": "Start flight search (fan-out to providers)",
+        "tags": [
+          "Search",
+        ],
+      },
+    },
+  },
+  "servers": [
+    {
+      "description": "local BFF",
+      "url": "http://localhost:3000",
+    },
+  ],
+  "tags": [
+    {
+      "name": "Search",
+    },
+    {
+      "name": "Health",
+    },
+  ],
+}
+`;
