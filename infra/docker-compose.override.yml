@@ -1,0 +1,73 @@
+services:
+  # one-shot: создаёт роль/БД для Temporal, если их нет
+  pg-init:
+    image: postgres:16
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: postgres     # поменяйте, если у postgres иной пароль
+      TZ: Europe/Berlin
+    entrypoint: [ "bash", "-lc" ]
+    command: >
+      set -e
+      psql -h postgres -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='temporal'" | grep -q 1 ||
+        psql -h postgres -U postgres -c "CREATE ROLE temporal LOGIN PASSWORD 'temporal' CREATEDB";
+      psql -h postgres -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='temporal'" | grep -q 1 ||
+        createdb -h postgres -U postgres -O temporal temporal;
+      psql -h postgres -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='temporal_visibility'" | grep -q 1 ||
+        createdb -h postgres -U postgres -O temporal temporal_visibility;
+      for db in temporal temporal_visibility; do
+        psql -h postgres -U postgres -d "$db" -v ON_ERROR_STOP=1 -c "ALTER SCHEMA public OWNER TO temporal";
+        psql -h postgres -U postgres -d "$db" -v ON_ERROR_STOP=1 -c "GRANT USAGE, CREATE ON SCHEMA public TO temporal";
+        psql -h postgres -U postgres -d "$db" -v ON_ERROR_STOP=1 -c "GRANT ALL PRIVILEGES ON DATABASE $db TO temporal";
+      done
+    restart: "no"
+
+  # опционально: админ-инструменты Temporal (tctl и пр.)
+  temporal-admin-tools:
+    image: temporalio/admin-tools:1.24
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+    depends_on:
+      temporal:
+        condition: service_started
+    restart: "no"
+
+  temporal:
+    image: temporalio/auto-setup:1.24.3
+    depends_on:
+      pg-init:
+        condition: service_completed_successfully
+    environment:
+      # Важно: указываем "postgres12" — это тип драйвера для Temporal, он поддерживает PG14–16
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_SEEDS=postgres          # имя сервиса Postgres в вашей сети compose
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_DB=temporal
+      - VISIBILITY_DB=temporal_visibility
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development.yaml
+    volumes:
+      - type: bind
+        source: ./temporal/dynamicconfig/development.yaml
+        target: /etc/temporal/config/dynamicconfig/development.yaml
+        read_only: true
+    ports:
+      - "7233:7233"
+    healthcheck:
+      test: ["CMD-SHELL", "tctl --address localhost:7233 cluster health | grep -q SERVING"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  temporal-ui:
+    image: temporalio/ui:2.21.0
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    ports:
+      - "8088:8080"
+    depends_on:
+      temporal:
+        condition: service_started   

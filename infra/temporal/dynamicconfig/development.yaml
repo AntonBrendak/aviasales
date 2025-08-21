@@ -1,0 +1,10 @@
+frontend.enableServerVersionCheck:
+  - value: false
+
+history.persistenceMaxQPS:
+  - value: 300
+
+matching.numTaskqueueReadPartitions:
+  - value: 1
+matching.numTaskqueueWritePartitions:
+  - value: 1
