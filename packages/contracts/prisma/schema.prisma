@@ -1,0 +1,169 @@
+// Prisma schema for PostgreSQL 16
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PaxType {
+  ADT
+  CHD
+  INF
+}
+
+enum CabinClass {
+  ECONOMY
+  PREMIUM_ECONOMY
+  BUSINESS
+  FIRST
+}
+
+model SearchSession {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  origin       String     @db.VarChar(3)
+  destination  String     @db.VarChar(3)
+  departure    DateTime
+  return       DateTime?
+  pax          Json       @db.JsonB      // { ADT: number, CHD?: number, INF?: number }
+  cabin        CabinClass
+  createdAt    DateTime   @default(now())
+  offers       Offer[]
+
+  @@index([origin, destination, departure, cabin])
+  @@index([createdAt])
+}
+
+model Offer {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  searchSessionId String        @db.Uuid
+  searchSession   SearchSession @relation(fields: [searchSessionId], references: [id], onDelete: Cascade)
+  provider        String        @db.VarChar(64)
+  dedupHash       String        @db.VarChar(64)
+  itinerary       Json          @db.JsonB       // normalized legs/segments
+  baggage         Json?         @db.JsonB
+  fareRules       Json?         @db.JsonB
+  createdAt       DateTime      @default(now())
+  pricedOffers    PricedOffer[]
+  ancillaries     AncillaryOffer[]
+
+  @@index([provider, searchSessionId])
+  @@unique([searchSessionId, dedupHash]) // дедуп одинаковых офферов в сессии
+}
+
+model PricedOffer {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  offerId   String   @db.Uuid
+  offer     Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  total     Decimal  @db.Decimal(18, 2)
+  currency  String   @db.VarChar(3)
+  brand     String?  @db.VarChar(64)
+  breakdown Json?    @db.JsonB          // baseFare/taxes/fees per pax
+  createdAt DateTime @default(now())
+
+  orders    Order[]
+
+  @@index([createdAt])
+}
+
+model Order {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pricedOfferId String      @db.Uuid
+  pricedOffer   PricedOffer @relation(fields: [pricedOfferId], references: [id])
+  status        String      @db.VarChar(32) // DRAFT | HOLD | BOOKED | CANCELLED
+  userId        String?     @db.Uuid
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  travelers     Traveler[]
+  payments      Payment[]
+  ancillaries   AncillaryOrder[]
+  pnr           PNR?
+
+  @@index([status, createdAt])
+}
+
+model Traveler {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String  @db.Uuid
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type      PaxType
+  firstName String  @db.VarChar(80)
+  lastName  String  @db.VarChar(80)
+  dob       DateTime
+  docType   String? @db.VarChar(16)
+  docNumber String? @db.VarChar(32)
+
+  @@index([orderId, type])
+}
+
+model Payment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String   @db.Uuid
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount    Decimal  @db.Decimal(18, 2)
+  currency  String   @db.VarChar(3)
+  status    String   @db.VarChar(32) // AUTHORIZED | CAPTURED | REFUNDED | FAILED
+  method    String?  @db.VarChar(32) // CARD | APPLE_PAY | GOOGLE_PAY | PAYPAL...
+  txnId     String?  @db.VarChar(128)
+  createdAt DateTime @default(now())
+
+  refunds   Refund[]
+
+  @@unique([txnId])
+  @@index([orderId, status])
+}
+
+model Refund {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  paymentId String   @db.Uuid
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  amount    Decimal  @db.Decimal(18, 2)
+  reason    String?  @db.VarChar(64)
+  status    String   @db.VarChar(32) // REQUESTED | EXECUTED | FAILED
+  createdAt DateTime @default(now())
+}
+
+model PNR {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String   @db.Uuid @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  locator   String   @db.VarChar(12) @unique
+  status    String   @db.VarChar(32) // ACTIVE | VOIDED | EXCHANGED
+  raw       Json?    @db.JsonB
+  createdAt DateTime @default(now())
+
+  tickets   Ticket[]
+}
+
+model Ticket {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pnrId        String   @db.Uuid
+  pnr          PNR      @relation(fields: [pnrId], references: [id], onDelete: Cascade)
+  ticketNumber String   @db.VarChar(20) @unique
+  status       String   @db.VarChar(32) // ISSUED | VOIDED | EXCHANGED
+  issuedAt     DateTime?
+}
+
+model AncillaryOffer {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  offerId   String  @db.Uuid
+  offer     Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  type      String  @db.VarChar(16) // BAG | SEAT | SSR
+  amount    Decimal @db.Decimal(18, 2)
+  currency  String  @db.VarChar(3)
+  details   Json?   @db.JsonB
+}
+
+model AncillaryOrder {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String  @db.Uuid
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type      String  @db.VarChar(16)
+  amount    Decimal @db.Decimal(18, 2)
+  currency  String  @db.VarChar(3)
+  details   Json?   @db.JsonB
+}
