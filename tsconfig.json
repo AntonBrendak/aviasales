@@ -1,0 +1,25 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "esnext",
+    "target": "es2022",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@packages/*": ["packages/*"],
+      "@contracts/*": ["packages/contracts/*"],
+      "@services/*": ["services/*"],
+      "@apps/*": ["apps/*"]
+    }
+  },
+  "references": [
+    { "path": "packages/lib" },
+    { "path": "packages/contracts/pricing" },
+    { "path": "services/pricing" },
+    { "path": "services/search" },
+    { "path": "apps/bff" },
+    { "path": "apps/workflows" }
+  ]
+}

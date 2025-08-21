@@ -1,0 +1,46 @@
+paths:
+  /v1/price:
+    post:
+      summary: Reprice offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriceRequest'
+      responses:
+        '200':
+          description: Priced offer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+components:
+  schemas:
+    PriceRequest:
+      type: object
+      required: [searchSessionId, offerId, pax]
+      properties:
+        searchSessionId: { type: string, format: uuid }
+        offerId: { type: string }
+        pax:
+          type: array
+          items:
+            type: object
+            required: [type, count]
+            properties:
+              type: { type: string, enum: [ADT,CHD,INF] }
+              count: { type: integer, minimum: 1 }
+        currency: { type: string, minLength: 3, maxLength: 3 }
+        paymentMethod: { type: string, enum: [card_3ds,sepa,wallet] }
+        includeAncillaries:
+          type: array
+          items:
+            type: object
+            required: [code]
+            properties:
+              code: { type: string }
+              quantity: { type: integer, minimum: 1, default: 1 }
+    PriceResponse:
+      type: object
+      required: [offerId, brand, currency, totals, breakdown, pricedAt, cacheTtlSec]

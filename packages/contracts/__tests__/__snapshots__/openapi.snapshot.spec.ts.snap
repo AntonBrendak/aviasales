@@ -4,196 +4,135 @@ exports[`BFF OpenAPI v1 snapshot 1`] = `
 {
   "components": {
     "schemas": {
-      "AirportCode": {
-        "example": "DUS",
-        "maxLength": 3,
-        "minLength": 3,
-        "type": "string",
-      },
-      "CabinClass": {
-        "enum": [
-          "ECONOMY",
-          "PREMIUM_ECONOMY",
-          "BUSINESS",
-          "FIRST",
-        ],
-        "type": "string",
-      },
-      "Currency": {
-        "enum": [
-          "EUR",
-          "USD",
-          "UAH",
-          "GBP",
-        ],
-        "type": "string",
-      },
-      "DateISO": {
-        "format": "date",
-        "type": "string",
-      },
-      "Leg": {
+      "Offer": {
         "properties": {
+          "baggage": {
+            "nullable": true,
+            "properties": {
+              "pieces": {
+                "type": "integer",
+              },
+              "weightKg": {
+                "nullable": true,
+                "type": "integer",
+              },
+            },
+            "type": "object",
+          },
+          "carrier": {
+            "type": "string",
+          },
+          "price": {
+            "properties": {
+              "amount": {
+                "type": "number",
+              },
+              "currency": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "amount",
+              "currency",
+            ],
+            "type": "object",
+          },
           "segments": {
             "items": {
               "$ref": "#/components/schemas/Segment",
             },
             "type": "array",
           },
-        },
-        "required": [
-          "segments",
-        ],
-        "type": "object",
-      },
-      "Money": {
-        "properties": {
-          "amount": {
-            "format": "double",
-            "minimum": 0,
-            "type": "number",
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency",
-          },
-        },
-        "required": [
-          "amount",
-          "currency",
-        ],
-        "type": "object",
-      },
-      "Offer": {
-        "properties": {
-          "baggage": {
-            "properties": {
-              "cabinBag": {
-                "type": "boolean",
-              },
-              "includedPieces": {
-                "type": "integer",
-              },
-            },
-            "type": "object",
-          },
-          "brand": {
+          "source": {
             "type": "string",
           },
-          "id": {
-            "format": "uuid",
-            "type": "string",
-          },
-          "itinerary": {
-            "properties": {
-              "legs": {
-                "items": {
-                  "$ref": "#/components/schemas/Leg",
-                },
-                "type": "array",
-              },
-            },
-            "required": [
-              "legs",
-            ],
-            "type": "object",
-          },
-          "price": {
-            "$ref": "#/components/schemas/Money",
-          },
-          "provider": {
+          "uid": {
             "type": "string",
           },
         },
         "required": [
-          "id",
-          "provider",
+          "uid",
           "price",
-          "itinerary",
+          "carrier",
+          "segments",
+          "source",
         ],
         "type": "object",
       },
-      "PaxMix": {
+      "Pax": {
         "properties": {
-          "ADT": {
+          "count": {
+            "maximum": 9,
             "minimum": 1,
             "type": "integer",
           },
-          "CHD": {
-            "minimum": 0,
-            "type": "integer",
-          },
-          "INF": {
-            "minimum": 0,
-            "type": "integer",
+          "type": {
+            "enum": [
+              "ADT",
+              "CHD",
+              "INF",
+            ],
+            "type": "string",
           },
         },
         "required": [
-          "ADT",
+          "type",
+          "count",
         ],
         "type": "object",
       },
-      "PaxType": {
-        "enum": [
-          "ADT",
-          "CHD",
-          "INF",
-        ],
-        "type": "string",
-      },
       "SearchRequest": {
-        "example": {
-          "cabin": "ECONOMY",
-          "departure": "2025-09-10",
-          "destination": "IST",
-          "origin": "DUS",
-          "pax": {
-            "ADT": 1,
-          },
-        },
         "properties": {
           "cabin": {
-            "$ref": "#/components/schemas/CabinClass",
+            "enum": [
+              "ECONOMY",
+              "PREMIUM_ECONOMY",
+              "BUSINESS",
+              "FIRST",
+            ],
+            "type": "string",
           },
-          "departure": {
-            "$ref": "#/components/schemas/DateISO",
-          },
-          "destination": {
-            "$ref": "#/components/schemas/AirportCode",
-          },
-          "filters": {
+          "dateRange": {
             "properties": {
-              "bags": {
-                "maximum": 2,
-                "minimum": 0,
-                "type": "integer",
+              "from": {
+                "format": "date",
+                "type": "string",
               },
-              "maxStops": {
-                "maximum": 3,
-                "minimum": 0,
-                "type": "integer",
-              },
-              "refundable": {
-                "type": "boolean",
+              "to": {
+                "format": "date",
+                "type": "string",
               },
             },
+            "required": [
+              "from",
+              "to",
+            ],
             "type": "object",
           },
+          "destination": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+          },
           "origin": {
-            "$ref": "#/components/schemas/AirportCode",
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
           },
           "pax": {
-            "$ref": "#/components/schemas/PaxMix",
-          },
-          "return": {
-            "$ref": "#/components/schemas/DateISO",
+            "items": {
+              "$ref": "#/components/schemas/Pax",
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array",
           },
         },
         "required": [
           "origin",
           "destination",
-          "departure",
+          "dateRange",
           "pax",
-          "cabin",
         ],
         "type": "object",
       },
@@ -206,80 +145,51 @@ exports[`BFF OpenAPI v1 snapshot 1`] = `
             "type": "array",
           },
           "partial": {
-            "default": true,
             "type": "boolean",
           },
-          "searchSessionId": {
-            "format": "uuid",
-            "type": "string",
-          },
         },
-        "required": [
-          "searchSessionId",
-          "offers",
-        ],
         "type": "object",
       },
       "Segment": {
         "properties": {
-          "arrTime": {
+          "arr": {
             "format": "date-time",
             "type": "string",
           },
-          "carrier": {
-            "example": "LH",
-            "type": "string",
-          },
-          "depTime": {
+          "dep": {
             "format": "date-time",
             "type": "string",
           },
-          "flightNumber": {
-            "example": "1234",
+          "flight": {
             "type": "string",
           },
           "from": {
-            "$ref": "#/components/schemas/AirportCode",
+            "type": "string",
           },
           "to": {
-            "$ref": "#/components/schemas/AirportCode",
+            "type": "string",
           },
         },
         "required": [
-          "carrier",
-          "flightNumber",
           "from",
           "to",
-          "depTime",
-          "arrTime",
+          "dep",
+          "arr",
+          "flight",
         ],
         "type": "object",
       },
     },
   },
   "info": {
-    "description": "BFF-контракты для фаз 1–3. В Phase 2 будет реализован /v1/search, в Phase 3 — /v1/price.
-",
-    "title": "Avia BFF API",
+    "title": "Air Platform BFF API",
     "version": "1.0.0",
   },
   "openapi": "3.0.3",
   "paths": {
-    "/healthz": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "OK",
-          },
-        },
-        "summary": "Health check",
-        "tags": [
-          "Health",
-        ],
-      },
-    },
     "/v1/search": {
       "post": {
+        "operationId": "search",
         "requestBody": {
           "content": {
             "application/json": {
@@ -299,29 +209,12 @@ exports[`BFF OpenAPI v1 snapshot 1`] = `
                 },
               },
             },
-            "description": "Search started and partial results returned",
+            "description": "OK",
           },
         },
-        "summary": "Start flight search (fan-out to providers)",
-        "tags": [
-          "Search",
-        ],
+        "summary": "Search flight offers",
       },
     },
   },
-  "servers": [
-    {
-      "description": "local BFF",
-      "url": "http://localhost:3000",
-    },
-  ],
-  "tags": [
-    {
-      "name": "Search",
-    },
-    {
-      "name": "Health",
-    },
-  ],
 }
 `;
