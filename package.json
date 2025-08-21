@@ -32,7 +32,8 @@
     "coverage": "vitest run --coverage",
     "// ----- CI convenience -----": "",
     "ci:check": "pnpm lint && pnpm typecheck && pnpm test && pnpm openapi:gen",
-    "openapi\\:gen\\:bff": "mkdir -p packages/contracts/types && openapi-typescript packages/contracts/openapi/bff.v1.yaml -o packages/contracts/types/bff.ts"
+    "openapi\\:gen\\:bff": "mkdir -p packages/contracts/types && openapi-typescript packages/contracts/openapi/bff.v1.yaml -o packages/contracts/types/bff.ts",
+    "clean": "rimraf .turbo **/.vite .vitest && pnpm store prune"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",
@@ -51,6 +52,7 @@
     "openapi-typescript": "^7.9.1",
     "prettier": "^3.3.3",
     "prisma": "^5.18.0",
+    "rimraf": "^6.0.1",
     "tsx": "^4.16.2",
     "turbo": "^2.5.6",
     "typescript": "^5.5.4",
