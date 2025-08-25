@@ -1,0 +1,138 @@
+# ─────────────────────────────
+# Root / Monorepo
+# ─────────────────────────────
+# DO NOT ignore lockfile
+!pnpm-lock.yaml
+
+# Node / pnpm cache
+node_modules/
+.pnpm-store/
+.npm/
+.tmp/
+temp/
+.tmp-cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Coverage / test artifacts
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+.vscode-test/
+
+# Build outputs (generic)
+dist/
+build/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+turbo-out/
+
+# Env & secrets (commit only templates)
+.env
+.env.*.local
+.env.local
+*.env.local
+*.secret
+*.pem
+*.key
+*.crt
+*.p12
+# Keep examples
+!*.env.example
+!.env.example
+
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+.idea/
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ─────────────────────────────
+# Next.js (apps/web, apps/admin, apps/agent)
+# ─────────────────────────────
+.next/
+out/
+.vercel/
+# Next cache
+apps/**/.next/
+apps/**/out/
+
+# Storybook
+storybook-static/
+apps/storybook/storybook-static/
+
+# MSW: оставляем файл воркера в репо (НЕ игнорировать)
+# public/mockServiceWorker.js — должен быть закоммичен
+
+# Images optimization caches
+*.png.compress
+*.jpg.compress
+
+# ─────────────────────────────
+# React Native / Expo (apps/mobile)
+# ─────────────────────────────
+.expo/
+.expo-shared/
+expo-debug.log
+.expo/*
+
+# EAS local creds caches (не хранить секреты)
+.eas/
+*.jks
+*.keystore
+
+# Android
+apps/mobile/android/.gradle/
+apps/mobile/android/.idea/
+apps/mobile/android/local.properties
+apps/mobile/android/.cxx/
+apps/mobile/android/captures/
+apps/mobile/android/app/build/
+apps/mobile/android/build/
+*.iml
+
+# iOS
+apps/mobile/ios/Pods/
+apps/mobile/ios/build/
+apps/mobile/ios/DerivedData/
+apps/mobile/ios/*.xcodeproj/project.xcworkspace/
+apps/mobile/ios/*.xcworkspace/xcuserdata/
+apps/mobile/ios/*.xcodeproj/xcuserdata/
+apps/mobile/ios/*.xcodeproj/*.pbxuser
+apps/mobile/ios/*.xcodeproj/*.mode*
+*.xcuserdatad
+*.xccheckout
+
+# Metro / RN caches
+.haste/
+.watchmanconfig
+.watchman/
+
+# ─────────────────────────────
+# Packages (libs)
+# ─────────────────────────────
+packages/**/dist/
+packages/**/build/
+packages/**/.tsbuildinfo
+
+# ─────────────────────────────
+# Docker / misc
+# ─────────────────────────────
+*.local.yml
+docker-data/
