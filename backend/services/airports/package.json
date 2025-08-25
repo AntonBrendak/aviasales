@@ -1,0 +1,14 @@
+{
+  "name": "@services/airports",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsx scripts/build-airports.ts",
+    "build:insecure": "NODE_TLS_REJECT_UNAUTHORIZED=0 tsx scripts/build-airports.ts",
+    "build:local": "AIRPORTS_CSV_FILE=./data/airports.csv tsx scripts/build-airports.ts"
+  },
+  "devDependencies": {
+    "csv-parse": "5.5.6",
+    "tsx": "4.19.2"
+  }
+}

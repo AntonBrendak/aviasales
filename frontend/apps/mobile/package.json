@@ -1,0 +1,12 @@
+{
+  "name": "@apps/mobile",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Mobile app (Expo) — stub for install",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "echo \"expo will be wired in Phase 0 -> later\"",
+    "build": "echo \"noop\"",
+    "test": "echo \"no tests yet\""
+  }
+}

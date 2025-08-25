@@ -1,0 +1,9 @@
+{
+  "name": "@packages/feature-flags",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Feature flags provider (stub)",
+  "type": "module",
+  "main": "src/provider.ts",
+  "scripts": { "build": "echo \"noop\"" }
+}

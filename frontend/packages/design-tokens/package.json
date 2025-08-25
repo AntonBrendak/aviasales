@@ -1,0 +1,9 @@
+{
+  "name": "@packages/design-tokens",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Design tokens (stub)",
+  "type": "module",
+  "main": "tokens.ts",
+  "scripts": { "build": "echo \"noop\"" }
+}

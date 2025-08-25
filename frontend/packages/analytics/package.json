@@ -1,0 +1,9 @@
+{
+  "name": "@packages/analytics",
+  "private": true,
+  "version": "0.0.0",
+  "description": "RUM/OTel wiring (stub)",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": { "build": "echo \"noop\"" }
+}

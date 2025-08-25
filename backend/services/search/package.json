@@ -1,0 +1,20 @@
+{
+  "name": "@services/search",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=./.env.local tsx watch -r dotenv/config src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.4",
+    "dotenv": "^17.2.1",
+    "typescript": "^5.5.4"
+  }
+}

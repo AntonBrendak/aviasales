@@ -1,0 +1,14 @@
+{
+  "name": "@packages/ui-web",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Web UI components (stub)",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": { "build": "echo \"noop\"" },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-bootstrap": "^2.0.0"
+  }
+}

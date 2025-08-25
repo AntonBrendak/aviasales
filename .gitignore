@@ -1,22 +1,46 @@
+# --- dependencies & package managers ---
 node_modules/
-dist/
-coverage/
-.vscode/
-.env
-pnpm-debug.log*
-.DS_Store
+.pnpm-store/
+.npm/
+.pnp.*
+.bun/
+# lockfiles должны быть в репо
+# (ничего тут не игнорим — pnpm-lock.yaml коммитим)
 
-
-# Node/Turbo/Vitest
-node_modules/
+# --- build / caches ---
 dist/
+build/
+.next/
+.out/
+.vite/
+.cache/
+.tmp/
+tmp/
+temp/
+.tmp-cache/
+.esbuild/
 .turbo/
-**/.turbo/
-.vitest/
-**/.vite/
-.eslintcache
 coverage/
+.nyc_output/
+playwright-report/
 
+# --- logs ---
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# Generated
-packages/contracts/types/
+# --- env / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- editors / OS ---
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp

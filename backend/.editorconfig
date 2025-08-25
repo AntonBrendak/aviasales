@@ -1,0 +1,5 @@
+# уже мелькала переменная db — зададим, чтобы убрать WARN
+db=postgres
+
+# пароль для Redis (dev)
+REDIS_PASSWORD=devpass123!

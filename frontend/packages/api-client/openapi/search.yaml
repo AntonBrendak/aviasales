@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: BFF Search API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/airports:
+    get:
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [code, name, city, country]
+                      properties:
+                        code:
+                          type: string
+                          example: DUS
+                        name: { type: string }
+                        city: { type: string }
+                        country: { type: string }
+  /v1/search:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [origin, destination, departDate, pax]
+              properties:
+                origin: { type: string }
+                destination: { type: string }
+                departDate:
+                  type: string
+                  format: date
+                returnDate:
+                  type: string
+                  format: date
+                  nullable: true
+                cabin:
+                  type: string
+                  enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+                  default: ECONOMY
+                pax:
+                  type: object
+                  required: [adults]
+                  properties:
+                    adults:
+                      type: integer
+                      minimum: 1
+                    children:
+                      type: integer
+                      minimum: 0
+                    infants:
+                      type: integer
+                      minimum: 0
+      responses:
+        "201":
+          description: created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [searchId]
+                properties:
+                  searchId:
+                    type: string
+  /v1/search/{id}/results:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: query
+          name: cursor
+          schema:
+            type: string
+            nullable: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [progress, items, complete]
+                properties:
+                  progress:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+                  complete: { type: boolean }
+                  nextCursor:
+                    type: string
+                    nullable: true
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, price, slices]
+                      properties:
+                        id: { type: string }
+                        brand:
+                          type: string
+                          nullable: true
+                        price:
+                          type: object
+                          required: [amount, currency]
+                          properties:
+                            amount: { type: number }
+                            currency:
+                              type: string
+                              example: EUR
+                        slices:
+                          type: array
+                          items:
+                            type: object
+                            required: [from, to, departAt, arriveAt, carrier]
+                            properties:
+                              from: { type: string }
+                              to: { type: string }
+                              departAt:
+                                type: string
+                                format: date-time
+                              arriveAt:
+                                type: string
+                                format: date-time
+                              carrier: { type: string }

@@ -1,0 +1,2 @@
+@use '@packages/ui-web/src/theme/bootstrap.scss';
+body { font-family: var(--font-sans, system-ui); }

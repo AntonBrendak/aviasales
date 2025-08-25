@@ -1,0 +1,22 @@
+node_modules/
+dist/
+coverage/
+.vscode/
+.env
+pnpm-debug.log*
+.DS_Store
+
+
+# Node/Turbo/Vitest
+node_modules/
+dist/
+.turbo/
+**/.turbo/
+.vitest/
+**/.vite/
+.eslintcache
+coverage/
+
+
+# Generated
+packages/contracts/types/

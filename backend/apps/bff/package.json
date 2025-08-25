@@ -1,0 +1,35 @@
+{
+  "name": "@apps/bff",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../../.env REDIS_URL=redis://:Devpass123!@127.0.0.1:6379 tsx watch -r dotenv/config src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  
+  "dependencies": {
+    "@air/otel": "workspace:^",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^4.21.2",
+    "fastify": "^4.28.1",
+    "helmet": "^7.2.0",
+    "http-errors": "^2.0.0",
+    "morgan": "^1.10.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/http-errors": "^2.0.5",
+    "@types/morgan": "^1.9.10",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}
